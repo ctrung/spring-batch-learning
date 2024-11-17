@@ -1,13 +1,17 @@
 package com.example.spring.batch.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.boot.autoconfigure.batch.BatchDataSource;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.core.task.VirtualThreadTaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 /**
@@ -60,5 +64,37 @@ public class CommonConfig {
 //        return taskExecutor;
 
         return new VirtualThreadTaskExecutor("spring_batch_");
+    }
+
+    @Bean
+    @ConfigurationProperties("spring.datasource")
+    public DataSourceProperties dataSourceProperties() {
+        return new DataSourceProperties();
+    }
+
+    @Bean
+    @Primary
+    public DataSource dataSource(@Qualifier("dataSourceProperties") DataSourceProperties dataSourceProperties) {
+        return dataSourceProperties
+                .initializeDataSourceBuilder()
+                .build();
+    }
+
+    @Bean
+    @ConfigurationProperties("spring.batch.datasource")
+    public DataSourceProperties batchDataSourceProperties() {
+        return new DataSourceProperties();
+    }
+
+    /**
+     * Les metadata Spring Batch sont dans une autre BDD.
+     * @see <a href="https://docs.spring.io/spring-boot/how-to/batch.html#howto.batch.specifying-a-data-source">Specifying a Batch Data Source</a>
+     */
+    @Bean
+    @BatchDataSource
+    public DataSource batchDataSource(@Qualifier("batchDataSourceProperties") DataSourceProperties dataSourceProperties) {
+        return dataSourceProperties
+                .initializeDataSourceBuilder()
+                .build();
     }
 }

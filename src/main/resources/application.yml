@@ -1,7 +1,10 @@
 spring :
   application.name : spring-batch-learning
   datasource :
-    url : jdbc:h2:./db
+    url: jdbc:mysql://localhost:3306/test
+    username: xxx
+    password: xxx
+    driverClassname: com.mysql.cj.jdbc.Driver
     hikari.maximum-pool-size : 10
   h2.console.enabled : true
   batch :
@@ -9,8 +12,12 @@ spring :
 #    job.enabled : false
 #    job.name : taskletJob
 #    job.name : chunkJob
-    job.name : chunkMultithreadedJob
+#    job.name : chunkMultithreadedJob
 #    job.name : chunkAsyncJob
+    job.name : jdbcJob
+    # Metadata dans un schéma séparé
+    datasource :
+      url : jdbc:h2:./db
 
 #logging:
 #  level:
