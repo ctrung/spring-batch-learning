@@ -29,13 +29,11 @@ import static com.example.spring.batch.config.CommonConfig.*;
  * <br><br>
  * Attention : il faut s'assurer que les éléments du chunk soient threadsafe. Dans cet exemple, {@link ListItemReader}
  * est enveloppé par {@link SynchronizedItemReader} de telle sorte que chaque chiffre n'est lu qu'une seule fois.
- * <br><br>
- * Chaque process et écriture prend 3 secondes.
  */
 @Configuration
 public class ChunkMultiThreadJobConfig {
 
-    private final Logger log = LoggerFactory.getLogger("ChunkMultiThreadJob");
+    private static final Logger log = LoggerFactory.getLogger("ChunkMultiThreadJob");
 
     @Bean
     public Job chunkMultithreadedJob(JobRepository jobRepository, Step chunkMultithreadedStep) {
@@ -51,8 +49,7 @@ public class ChunkMultiThreadJobConfig {
                                        ItemReader<String> chunkMultithreadedReader,
                                        ItemProcessor<String, String> chunkMultithreadedProcessor,
                                        ItemWriter<String> chunkMultithreadedWriter,
-                                       RepeatOperations multithreadedRepeatOperations,
-                                       TaskExecutor taskExecutor) {
+                                       RepeatOperations multithreadedRepeatOperations) {
 
         return new StepBuilder("chunkMultithreadedStep", jobRepository)
                 .<String, String>chunk(CHUNK_SIZE, transactionManager)
@@ -86,16 +83,18 @@ public class ChunkMultiThreadJobConfig {
         };
     }
 
-    /**
-     * @see <a href="https://github.com/spring-projects/spring-batch/issues/4389">issue#4389</a>
-     * @see <a href="https://docs.spring.io/spring-batch/reference/scalability.html#multithreadedStep">Throttle limit deprecation</a>
-     */
     @Bean
     public RepeatOperations multithreadedRepeatOperations(TaskExecutor taskExecutor) {
 
         TaskExecutorRepeatTemplate repeatTemplate = new TaskExecutorRepeatTemplate();
         repeatTemplate.setTaskExecutor(taskExecutor);
+
+        /*
+         * @see <a href="https://github.com/spring-projects/spring-batch/issues/4389">issue#4389</a>
+         * @see <a href="https://docs.spring.io/spring-batch/reference/scalability.html#multithreadedStep">Throttle limit deprecation</a>
+         */
         repeatTemplate.setThrottleLimit(THROTTLE_LIMIT);
+
         return repeatTemplate;
     }
 }

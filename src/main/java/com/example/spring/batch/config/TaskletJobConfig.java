@@ -20,7 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 public class TaskletJobConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(TaskletJobConfig.class);
+    private static final Logger log = LoggerFactory.getLogger("TaskletJob");
 
     @Bean
     public Job taskletJob(JobRepository jobRepository, Step taskletStep) {

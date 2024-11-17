@@ -24,15 +24,13 @@ import static com.example.spring.batch.config.CommonConfig.*;
 /**
  * Job avec une étape de type chunk.
  * <br><br>
- * Chaque process et écriture prend 3 secondes pour démontrer le comportement séquentiel par défaut.
- * <br><br>
  * Pour des améliorations en temps d'exécution :
  * @see ChunkMultiThreadJobConfig
  */
 @Configuration
 public class ChunkJobConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(ChunkJobConfig.class);
+    private static final Logger log = LoggerFactory.getLogger("ChunkJob");
 
     @Bean
     public Job chunkJob(JobRepository jobRepository, Step chunkStep) {

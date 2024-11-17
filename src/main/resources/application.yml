@@ -10,6 +10,7 @@ spring :
 #    job.name : taskletJob
 #    job.name : chunkJob
     job.name : chunkMultithreadedJob
+#    job.name : chunkAsyncJob
 
 #logging:
 #  level:
